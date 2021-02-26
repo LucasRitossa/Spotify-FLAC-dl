@@ -7,16 +7,11 @@ import (
 
 func main() {
 	h := Handler.UserContent{}
-	p := []Handler.Playlist{}
+	p := make([]Handler.Playlist, 1, 100)
+
 	var input string
 	fmt.Println("Input spotify playlist link: ")
 	fmt.Scanln(&input)
 	h.SetUrl(input)
-
-	for i := 0; i < 7; i++ {
-		var currentUrl string
-		h.GetSpotifyPlaylist(&p[i], currentUrl)
-		currentUrl = string(p[i].Next)
-		p[i].GetPlaylist()
-	}
+	h.GetSpotifyPlaylist(p)
 }
