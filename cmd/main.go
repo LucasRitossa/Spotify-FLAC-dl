@@ -1,16 +1,22 @@
 package main
 
 import (
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
-  "Spotify-FLAC-dl/Handler"
-	"net/http"
+	"Spotify-FLAC-dl/Handler"
+	"fmt"
 )
 
 func main() {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/", Handler.GetAudio)
-	http.ListenAndServe(":8080", r)
-}
+	h := Handler.UserContent{}
+	p := []Handler.Playlist{}
+	var input string
+	fmt.Println("Input spotify playlist link: ")
+	fmt.Scanln(&input)
+	h.SetUrl(input)
 
+	for i := 0; i < 7; i++ {
+		var currentUrl string
+		h.GetSpotifyPlaylist(&p[i], currentUrl)
+		currentUrl = string(p[i].Next)
+		p[i].GetPlaylist()
+	}
+}
