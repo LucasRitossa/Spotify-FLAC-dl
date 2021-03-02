@@ -27,41 +27,44 @@ type Playlist struct {
 	Total int    `json:"total"`
 }
 
-func getARL() (UserContent, error) {
-	var config UserContent
+func New(userPlaylist string) UserContent {
+	u := UserContent{}
+	u.spotifyUrl = userPlaylist
+  getARL(&u)
+  return u
+}
+
+func getARL(u *UserContent) {
 	configFile, err := os.Open("config.json")
 	if err != nil {
-		return config, err
+    fmt.Println(err.Error())
 	}
 	defer configFile.Close()
 	jsonParser := json.NewDecoder(configFile)
-	jsonParser.Decode(&config)
-	return config, err
+	jsonParser.Decode(u)
 }
 
-func (u *UserContent) SetUrl(url string) {
-	u.spotifyUrl = url
-}
-
-func (u *UserContent) GetPlaylist(p []Playlist) {
+func (u *UserContent) PrintPlaylist(p []Playlist) {
 	fmt.Println(p)
 }
 
 func (u *UserContent) GetSpotifyPlaylist(p []Playlist) (string, error) {
 	var req *http.Request
 	var playlistLength float64 = 1
+  fmt.Println("ARLKEY: ", u.ARLKEY)
+  fmt.Println("URL: ", u.spotifyUrl)
 
 	for i := 0; i < int(playlistLength); i++ {
 
 		if i == 0 {
-			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/4MRFMcazMrU660XGjoyjhp/tracks?market=US&fields=items(track(name%2Calbum(name)))%2Cnext%2Ctotal&offset=0", nil)
+			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/" + u.spotifyUrl + "/tracks?market=US&fields=items(track(name%2Calbum(name)))%2Cnext%2Ctotal", nil)
 		} else {
 			req, _ = http.NewRequest("GET", p[i-1].Next, nil)
 		}
 
 		req.Header.Set("Accept", "application/json")
 		req.Header.Add("Content-Type", "application/json")
-		req.Header.Add("Authorization", "Bearer BQCHs9Atbz2a-r_SZYkdeWfee_54xusFhrSw1VHD5oI1cxvlE6JZDJTSEzOp5e_WD2MhtITzSdNyladK2ot59FfbvAz-Q8p0FZTsMWW1PXSKbnCFY9iZEDYWT21uXkD99OXf1S-c0M_of9c3YcuibvZp3WhDCptddzAufwI8qrHw")
+		req.Header.Add("Authorization", "Bearer "+u.ARLKEY)
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
@@ -78,15 +81,10 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) (string, error) {
 			return "", err
 		}
 
+		// Need support for playlists < 100 songs
 		if i == 0 {
 			playlistLength = math.Trunc(float64(p[0].Total/100)) + 1
 		}
 	}
-	// unmarshal not mapping correctly, need all this logic to cut p.total into a single int, then allocate
-	// a slice of the correct nice (use less memory), could instead just allocate an array like 10 which is
-	// longer then the max spotify playlist (lame)
-
-	// once array allocated, need to copy old array (playlistBackup) into new array (p)
-	// we need an else unmarshal because we dont want to reallocate everything if its allready there
 	return "", nil
 }
