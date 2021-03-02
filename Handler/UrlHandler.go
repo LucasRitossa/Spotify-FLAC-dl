@@ -11,7 +11,7 @@ import (
 
 type UserContent struct {
 	spotifyUrl string
-	ARLKEY     string `json:"ARL"`
+	Token      string `json:"Token"`
 }
 
 type Playlist struct {
@@ -30,14 +30,14 @@ type Playlist struct {
 func New(userPlaylist string) UserContent {
 	u := UserContent{}
 	u.spotifyUrl = userPlaylist
-  getARL(&u)
-  return u
+	getARL(&u)
+	return u
 }
 
 func getARL(u *UserContent) {
 	configFile, err := os.Open("config.json")
 	if err != nil {
-    fmt.Println(err.Error())
+		fmt.Println(err.Error())
 	}
 	defer configFile.Close()
 	jsonParser := json.NewDecoder(configFile)
@@ -51,20 +51,18 @@ func (u *UserContent) PrintPlaylist(p []Playlist) {
 func (u *UserContent) GetSpotifyPlaylist(p []Playlist) (string, error) {
 	var req *http.Request
 	var playlistLength float64 = 1
-  fmt.Println("ARLKEY: ", u.ARLKEY)
-  fmt.Println("URL: ", u.spotifyUrl)
 
 	for i := 0; i < int(playlistLength); i++ {
 
 		if i == 0 {
-			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/" + u.spotifyUrl + "/tracks?market=US&fields=items(track(name%2Calbum(name)))%2Cnext%2Ctotal", nil)
+			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Calbum(name)))%2Cnext%2Ctotal", nil)
 		} else {
 			req, _ = http.NewRequest("GET", p[i-1].Next, nil)
 		}
 
 		req.Header.Set("Accept", "application/json")
 		req.Header.Add("Content-Type", "application/json")
-		req.Header.Add("Authorization", "Bearer "+u.ARLKEY)
+		req.Header.Add("Authorization", "Bearer "+u.Token)
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
