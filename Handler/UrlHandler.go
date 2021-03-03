@@ -2,6 +2,7 @@ package Handler
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math"
@@ -12,19 +13,24 @@ import (
 type UserContent struct {
 	spotifyUrl string
 	Token      string `json:"Token"`
+	DeezerURL  string `json:"link"`
 }
 
 type Playlist struct {
 	Items []struct {
 		Track struct {
-			Album struct {
+			Artists []struct {
 				Name string `json:"name"`
-			} `json:"album"`
+			} `json:"artists"`
 			Name string `json:"name"`
 		} `json:"track"`
 	} `json:"items"`
 	Next  string `json:"next"`
 	Total int    `json:"total"`
+	Error struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	} `json:"error"`
 }
 
 func New(userPlaylist string) UserContent {
@@ -48,14 +54,14 @@ func (u *UserContent) PrintPlaylist(p []Playlist) {
 	fmt.Println(p)
 }
 
-func (u *UserContent) GetSpotifyPlaylist(p []Playlist) (string, error) {
+func (u *UserContent) GetSpotifyPlaylist(p []Playlist) error {
 	var req *http.Request
 	var playlistLength float64 = 1
 
 	for i := 0; i < int(playlistLength); i++ {
 
 		if i == 0 {
-			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Calbum(name)))%2Cnext%2Ctotal", nil)
+			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Cartists(name)%2C))%2Cnext%2Ctotal", nil)
 		} else {
 			req, _ = http.NewRequest("GET", p[i-1].Next, nil)
 		}
@@ -66,17 +72,20 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) (string, error) {
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
-			return "", err
+			return err
 		}
 
 		jsn, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return "", err
+			return err
 		}
 
 		err = json.Unmarshal(jsn, &p[i])
 		if err != nil {
-			return "", err
+			return err
+		}
+		if p[i].Error.Status != 0 {
+			return errors.New(p[i].Error.Message)
 		}
 
 		// Need support for playlists < 100 songs
@@ -84,5 +93,5 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) (string, error) {
 			playlistLength = math.Trunc(float64(p[0].Total/100)) + 1
 		}
 	}
-	return "", nil
+	return nil
 }

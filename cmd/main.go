@@ -3,14 +3,21 @@ package main
 import (
 	"Spotify-FLAC-dl/Handler"
 	"fmt"
+  "log"
 )
 
 func main() {
 	p := make([]Handler.Playlist, 100, 100)
   h := Handler.New(getInput())
 
-	fmt.Println(h.GetSpotifyPlaylist(p))
-  h.PrintPlaylist(p)
+  err := h.GetSpotifyPlaylist(p)
+  if err != nil {
+    log.Fatalln(err)
+  }
+  err = h.GetDeezerLinks(p)
+  if err != nil {
+    log.Fatalln(err)
+  }
 }
 
 func getInput() string {
