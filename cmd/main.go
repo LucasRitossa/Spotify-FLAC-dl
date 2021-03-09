@@ -18,6 +18,8 @@ func main() {
   if err != nil {
     log.Fatalln(err)
   }
+
+  // h.PrintPlaylist(p)
 }
 
 func getInput() string {
