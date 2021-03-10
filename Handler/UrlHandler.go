@@ -10,10 +10,16 @@ import (
 	"os"
 )
 
+type DeezerLinks struct {
+	Data []struct {
+		Link string `json:"link"`
+  } `json:"data"`
+}
+
 type UserContent struct {
 	spotifyUrl string
 	Token      string `json:"Token"`
-	DeezerURL  string `json:"link"`
+  finalLinks []DeezerLinks
 }
 
 type Playlist struct {
