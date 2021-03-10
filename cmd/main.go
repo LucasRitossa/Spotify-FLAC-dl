@@ -19,7 +19,6 @@ func main() {
     log.Fatalln(err)
   }
 
-  // h.PrintPlaylist(p)
 }
 
 func getInput() string {

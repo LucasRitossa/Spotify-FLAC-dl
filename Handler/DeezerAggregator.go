@@ -11,12 +11,18 @@ import (
 func (u *UserContent) GetDeezerLinks(p []Playlist) error {
 	var req *http.Request
   var jsonPush []DeezerLinks
+  j := 0
+  x := 0
 
   jsonPush = make([]DeezerLinks, 10000, 10000) // Any way to make this dynamic?
 
 	for i := range p {
-		queryArtistName := strings.ReplaceAll(p[i].Items[0].Track.Artists[0].Name, " ", "+")
-		queryTrack := strings.ReplaceAll(p[i].Items[0].Track.Name, " ", "+")
+    if i == 100 {
+      j++
+      x = 0
+    }
+		queryArtistName := strings.ReplaceAll(p[j].Items[x].Track.Artists[0].Name, " ", "+")
+		queryTrack := strings.ReplaceAll(p[j].Items[x].Track.Name, " ", "+")
 		query := "https://api.deezer.com/search?q=" + `artist:"` + queryArtistName + `",track:"` + queryTrack + `"`
 		fmt.Println("QUERY: ", query)
 
@@ -26,6 +32,7 @@ func (u *UserContent) GetDeezerLinks(p []Playlist) error {
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
+      fmt.Println(jsonPush)
 			return err
 		}
 
@@ -39,9 +46,9 @@ func (u *UserContent) GetDeezerLinks(p []Playlist) error {
 		if err != nil {
 			return err
 		}
-
-		 fmt.Println("JSON: ", jsonPush[i])
+     x++
 	}
   u.finalLinks = jsonPush
+  fmt.Print(u.finalLinks)
 	return nil
 }
