@@ -13,12 +13,6 @@ import (
 func (u *UserContent) DownloadAll() {
 	for i := 0; i < u.songCount; i++ {
 		if len(u.finalLinks[i].Data) != 0 {
-      fmt.Println(len(u.finalLinks[i].Data))
-			fmt.Println(u.finalLinks[i].Data[0].Link)
-		}
-	}
-	for i := 0; i < u.songCount; i++ {
-		if len(u.finalLinks[i].Data) != 0 {
 			i1 := "python3"
 			i2 := "-m"
 			i3 := "deemix"
@@ -26,11 +20,14 @@ func (u *UserContent) DownloadAll() {
 			i5 := "-p"
 			i6 := "./downloads"
 			q := u.finalLinks[i].Data[0].Link
-			cmd := exec.Command(i1, i2, i3, i4, q)
-			cmd.Output()
+      cmd := exec.Command(i1, i2, i3, i4, q)
+      _, err := cmd.Output()
+      if err != nil{
+        fmt.Println(err)
+      }
 			fmt.Println("DOWNLOADING: ", u.finalLinks[i].Data[0].Link)
-			fmt.Println(i)
-			os.WriteFile("./config/.arl", []byte(""), 0666)
+      fmt.Println("SONG-NUMBER: ",i+1)
+			os.WriteFile("./config/.arl", []byte(u.Token.Arl), 0666)
 			cmd = exec.Command(i1, i2, i3, i4, q, i5, i6)
 			cmd.Output()
 		}

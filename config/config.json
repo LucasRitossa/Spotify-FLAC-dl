@@ -1,5 +1,5 @@
 {
-    "downloadLocation": "../downloads/",
+    "downloadLocation": "./downloads",
     "tracknameTemplate": "%artist% - %title%",
     "albumTracknameTemplate": "%tracknumber% - %title%",
     "playlistTracknameTemplate": "%position% - %artist% - %title%",

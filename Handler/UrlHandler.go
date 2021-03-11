@@ -19,7 +19,10 @@ type DeezerLinks struct {
 type UserContent struct {
 	songCount  int
 	spotifyUrl string
-	Token      string `json:"Token"`
+	Token struct {
+		SpotifyToken string `json:"Token"`
+		Arl   string `json:"ARL"`
+	}
 	finalLinks []DeezerLinks
 }
 
@@ -54,7 +57,7 @@ func getARL(u *UserContent) {
 	}
 	defer configFile.Close()
 	jsonParser := json.NewDecoder(configFile)
-	jsonParser.Decode(u)
+	jsonParser.Decode(&u.Token)
 }
 
 func (u *UserContent) PrintPlaylist(p []Playlist) {
@@ -69,13 +72,14 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) error {
 
 		if i == 0 {
 			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Cartists(name)%2C))%2Cnext%2Ctotal", nil)
+			fmt.Println("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Cartists(name)%2C))%2Cnext%2Ctotal")
 		} else {
 			req, _ = http.NewRequest("GET", p[i-1].Next, nil)
 		}
 
 		req.Header.Set("Accept", "application/json")
 		req.Header.Add("Content-Type", "application/json")
-		req.Header.Add("Authorization", "Bearer "+u.Token)
+		req.Header.Add("Authorization", "Bearer "+u.Token.SpotifyToken)
 		client := &http.Client{}
 		resp, err := client.Do(req)
 		if err != nil {
@@ -97,7 +101,11 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) error {
 
 		// Need support for playlists < 100 songs
 		if i == 0 {
-			playlistLength = math.Trunc(float64(p[0].Total/100)) + 1
+			if playlistLength > 100 {
+				playlistLength = math.Trunc(float64(p[0].Total/100)) + 1
+			} else {
+				playlistLength = 1
+			}
 		}
 	}
 	return nil
