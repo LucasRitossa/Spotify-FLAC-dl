@@ -13,13 +13,14 @@ import (
 type DeezerLinks struct {
 	Data []struct {
 		Link string `json:"link"`
-  } `json:"data"`
+	} `json:"data"`
 }
 
 type UserContent struct {
+	songCount  int
 	spotifyUrl string
 	Token      string `json:"Token"`
-  finalLinks []DeezerLinks
+	finalLinks []DeezerLinks
 }
 
 type Playlist struct {
