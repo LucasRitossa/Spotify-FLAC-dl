@@ -49,7 +49,10 @@ func (u *UserContent) GetDeezerLinks(p []Playlist) error {
 			x = 0
 		}
 
-		queryArtistName := strings.ReplaceAll(p[j].Items[x].Track.Artists[0].Name, " ", "+")
+    var queryArtistName string
+    if len(p[j].Items[x].Track.Artists) != 0 {
+		  queryArtistName = strings.ReplaceAll(p[j].Items[x].Track.Artists[0].Name, " ", "+")
+    }
 		queryTrack := strings.ReplaceAll(p[j].Items[x].Track.Name, " ", "+")
 		query := "https://api.deezer.com/search?q=" + `artist:"` + queryArtistName + `",track:"` + queryTrack + `"`
 		query = strings.ReplaceAll(query, "Ö", "O") // proper unicode support?
