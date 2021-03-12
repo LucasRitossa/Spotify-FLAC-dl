@@ -20,13 +20,13 @@ func (u *UserContent) DownloadAll() {
 			i5 := "-p"
 			i6 := "./downloads"
 			q := u.finalLinks[i].Data[0].Link
-      cmd := exec.Command(i1, i2, i3, i4, q)
-      _, err := cmd.Output()
-      if err != nil{
-        fmt.Println(err)
-      }
+			cmd := exec.Command(i1, i2, i3, i4, q)
+			_, err := cmd.Output()
+			if err != nil {
+				fmt.Println(err)
+			}
 			fmt.Println("DOWNLOADING: ", u.finalLinks[i].Data[0].Link)
-      fmt.Println("SONG-NUMBER: ",i+1)
+			fmt.Println("SONG-NUMBER: ", i+1)
 			os.WriteFile("./config/.arl", []byte(u.Token.Arl), 0666)
 			cmd = exec.Command(i1, i2, i3, i4, q, i5, i6)
 			cmd.Output()
@@ -49,10 +49,11 @@ func (u *UserContent) GetDeezerLinks(p []Playlist) error {
 			x = 0
 		}
 
-    var queryArtistName string
-    if len(p[j].Items[x].Track.Artists) != 0 {
-		  queryArtistName = strings.ReplaceAll(p[j].Items[x].Track.Artists[0].Name, " ", "+")
-    }
+		var queryArtistName string
+
+		if len(p[j].Items[x].Track.Artists) > 0 {
+			queryArtistName = strings.ReplaceAll(p[j].Items[x].Track.Artists[0].Name, " ", "+")
+		}
 		queryTrack := strings.ReplaceAll(p[j].Items[x].Track.Name, " ", "+")
 		query := "https://api.deezer.com/search?q=" + `artist:"` + queryArtistName + `",track:"` + queryTrack + `"`
 		query = strings.ReplaceAll(query, "Ö", "O") // proper unicode support?
@@ -62,7 +63,7 @@ func (u *UserContent) GetDeezerLinks(p []Playlist) error {
 		query = strings.ReplaceAll(query, "✦", "")
 		query = strings.ReplaceAll(query, "✰", "")
 
-		fmt.Println("I-INDEX: ", i+1, ",", "X-INDEX: ", x, ",", "J-INDEX: ", j, ",", "QUERY: ", query)
+		fmt.Println("REQUEST-NUMBER: ", i+1, ",", "QUERY: ", query)
 		req, _ = http.NewRequest("GET", query, nil)
 
 		client := &http.Client{}

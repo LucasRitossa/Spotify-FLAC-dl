@@ -19,9 +19,9 @@ type DeezerLinks struct {
 type UserContent struct {
 	songCount  int
 	spotifyUrl string
-	Token struct {
+	Token      struct {
 		SpotifyToken string `json:"Token"`
-		Arl   string `json:"ARL"`
+		Arl          string `json:"ARL"`
 	}
 	finalLinks []DeezerLinks
 }
@@ -72,7 +72,6 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) error {
 
 		if i == 0 {
 			req, _ = http.NewRequest("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Cartists(name)%2C))%2Cnext%2Ctotal", nil)
-			fmt.Println("GET", "https://api.spotify.com/v1/playlists/"+u.spotifyUrl+"/tracks?market=US&fields=items(track(name%2Cartists(name)%2C))%2Cnext%2Ctotal")
 		} else {
 			req, _ = http.NewRequest("GET", p[i-1].Next, nil)
 		}
@@ -101,10 +100,8 @@ func (u *UserContent) GetSpotifyPlaylist(p []Playlist) error {
 
 		// Need support for playlists < 100 songs
 		if i == 0 {
-			if playlistLength > 100 {
+			if p[0].Total>= 100 {
 				playlistLength = math.Trunc(float64(p[0].Total/100)) + 1
-			} else {
-				playlistLength = 1
 			}
 		}
 	}
