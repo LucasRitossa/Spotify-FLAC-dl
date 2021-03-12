@@ -17,3 +17,7 @@ Spotify-FLAC-dl allows you to download a spotify playlist in lossy/lossless qual
 >
 > ./Spoitify-FLAC-dl (NIX)
 
+# Issues
+
+Currently alt characters and non-english characters break this program, the source can be edited to allow these characters to be bypassed,
+but the bianary options will have this issue until a fix is found.
