@@ -4,7 +4,7 @@ Spotify-FLAC-dl allows you to download a spotify playlist in lossy/lossless qual
 
 ## Installation
 
-> git clone https://github.com/LucasRitossa/Spotify-FLAC-dl
+> Download release [here](https://github.com/LucasRitossa/Spotify-FLAC-dl/releases)
 >
 > find spotify token - (Currently follow [this link](https://developer.spotify.com/console/get-playlist-tracks/?playlist_id=21THa8j9TaSGuXYNBU5tsC&user_id=spotify_espa%C3%B1a))
 > click **GET TOKEN** and select **playlist-read-private**, then copy the OAuth Token (this is a current solution, fix soon)
