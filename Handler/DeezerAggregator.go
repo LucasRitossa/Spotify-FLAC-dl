@@ -13,7 +13,7 @@ import (
 func (u *UserContent) DownloadAll() {
 	for i := 0; i < u.songCount; i++ {
 		if len(u.finalLinks[i].Data) != 0 {
-			i1 := "python3"
+			i1 := "python"
 			i2 := "-m"
 			i3 := "deemix"
 			i4 := "--portable"

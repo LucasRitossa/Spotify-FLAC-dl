@@ -13,7 +13,6 @@ Spotify-FLAC-dl allows you to download a spotify playlist in lossy/lossless qual
 > 
 > place spotify token and arl inside of config.json
 >
-> pip install deemix (python3 needed in path)
+> python3 -m pip install deemix
 >
-> ./Spoitify-FLAC-dl (NIX)
-
+> ./Spoitify-FLAC-dl
