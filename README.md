@@ -1,5 +1,5 @@
 ## Spotify-FLAC-dl
-
+# This program will now only download in FLAC if you are using a Deezer HIFI account (120kbs MP3 default)
 Spotify-FLAC-dl allows you to download a spotify playlist in lossy/lossless quality
 
 ## Installation
